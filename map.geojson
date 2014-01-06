@@ -1,0 +1,61 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ecublens",
+        "tel": "033 456789123"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.574287414550781,
+          46.53985319316517
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tel": "021 123 456 789",
+        "name": "Prilly"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.607761383056641,
+          46.54587479918904
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Lausanne",
+        "tel": "022 123456879"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.647930145263672,
+          46.51741387987041
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "toto",
+        "Tél": "021 456789123"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.604499816894531,
+          46.527689873863785
+        ]
+      }
+    }
+  ]
+}
