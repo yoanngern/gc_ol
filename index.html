@@ -12,23 +12,23 @@
     position: relative;
 }
 #result {
-    transition: opacity 500 ease-out;
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.8);
+    transition: all 1s;
+    overflow: hidden;
     padding: 0 15px;
-    right: 0;
-    top: 0;
-    height: 426px;
-    width: 150px;
+    width: 770px;
     z-index: 1;
+    height: 0px;
+    border-bottom: 1px solid black;
+}
+#result.selected {
+    height: 100px;
 }
 </style>
 </head>
 <body>
 <input id="search"></input>
-<div id="map">
-<div id="result" style="display:none;"></div>
-</div>
+<div id="map"></div>
+<div id="result"></div>
 <script type="text/javascript" src="js/ol.js"></script>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.js"></script>

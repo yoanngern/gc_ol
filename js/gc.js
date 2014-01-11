@@ -19,8 +19,7 @@ var waypoint_layer = new ol.layer.Vector({
     styleFunction: styleFunction
 });
 
-//var 
-map = new ol.Map({
+var map = new ol.Map({
 //    interactions: ol.interaction.defaults().extend([select]),
     renderer: ol.RendererHint.CANVAS,
     target: 'map',
@@ -56,13 +55,13 @@ function select(feature) {
         source: view.getCenter()
     }));
     view.setCenter(feature.getGeometry().getCoordinates());
-    
+
     show(feature);
 }
-    
+
 function show(feature) {
     $("#result").html("<h5>" + feature.get('name') + "</h5><p>" + feature.get('tel') + "</p>");
-    $("#result").show();
+    $("#result").addClass('selected');
 }
 
 var first = true;
@@ -84,7 +83,7 @@ bases.addEventListener(goog.events.EventType.CHANGE, function() {
     }
 })
 $("#result").click(function() {
-    $("#result").hide();
+    $("#result").removeClass('selected');
 });
 
 
@@ -105,8 +104,8 @@ geolocation.on('change:position', function(event) {
         source: view.getCenter()
     }));
     view.setCenter(geolocation.getPosition());
-    
-    
+
+
     //TODO
 });
 
