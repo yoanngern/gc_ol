@@ -1,14 +1,3 @@
-/*var style = {
-    image: ol.shape.renderCircle(
-        5,
-        new ol.style.Fill({
-            color: 'rgba(0,0,0,0.2)'
-        }),
-        new ol.style.Stroke({
-            color: 'rgba(0,0,0,0.7)'
-        })
-    )
-};*/
 var styles = {
     'Point': [new ol.style.Style({
         image: new ol.style.Circle({
@@ -22,14 +11,17 @@ var styleFunction = function(feature, resolution) {
     return styles[feature.getGeometry().getType()];
 };
 
+var bases = new ol.source.GeoJSON({
+    url: 'map.geojson'
+});
 var waypoint_layer = new ol.layer.Vector({
-    source: new ol.source.GeoJSON({
-        url: 'map.geojson'
-    }),
+    source: bases,
     styleFunction: styleFunction
 });
 
-var map = new ol.Map({
+//var 
+map = new ol.Map({
+//    interactions: ol.interaction.defaults().extend([select]),
     renderer: ol.RendererHint.CANVAS,
     target: 'map',
     layers: [
@@ -45,51 +37,77 @@ var map = new ol.Map({
     controls: ol.control.defaults().extend([
     ])
 });
-
 var view = map.getView();
-/*
-var animation = ol.animation.zoom({
-    duration: 400,
-//    resolution: view.getResolution()
-});
-map.beforeRender(animation);
 
-var animation = ol.animation.pan({
-    duration: 400,
-//    source: view.getCenter()
-});
-map.beforeRender(animation);*/
 $.urlParam = function(key) {
     var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
     return result && unescape(result[1]) || "";
 }
 
-$("#search").autocomplete({
-    source: function(request, responce) {
-        $.ajax({
-            url: 'http://nominatim.openstreetmap.org/search',
-            dataType: "jsonp",
-            jsonp: 'json_callback',
-            data: {
-                format: 'jsonv2',
-                q: request.term,
-                countrycodes: 'ch',
-                state: 'Vaud',
-//                viewbox: '45,5,48,8',
-                limit: 20,
-                polygon_geojson: 1,
-            },
-            success: function(data) {
-                responce($.map(data, function(item) {
-                    return {
-                        label: item.display_name,
-                        value: item
-                    }
-                }));
+function select(feature) {
+    map.beforeRender(ol.animation.zoom({
+        duration: 500,
+        resolution: view.getResolution()
+    }));
+    view.setZoom(16);
+
+    map.beforeRender(ol.animation.pan({
+        duration: 500,
+        source: view.getCenter()
+    }));
+    view.setCenter(feature.getGeometry().getCoordinates());
+    
+    show(feature);
+}
+    
+function show(feature) {
+    $("#result").html("<h5>" + feature.get('name') + "</h5><p>" + feature.get('tel') + "</p>");
+    $("#result").show();
+}
+
+var first = true;
+bases.addEventListener(goog.events.EventType.CHANGE, function() {
+    if (first && bases.getState() == ol.source.State.READY) {
+        first = false;
+        $("#search").autocomplete({
+            source: $.map(bases.getAllFeatures(), function(feature) {
+                return {
+                    label: feature.get('name'),
+                    value: feature.get('name'),
+                    feature: feature
+                }
+            }),
+            select: function(event, element) {
+                select(element.item.feature);
             }
-        })
-    },
-    select: function(event, ui) {
-        //TODO
+        });
     }
+})
+$("#result").click(function() {
+    $("#result").hide();
 });
+
+
+
+var geolocation = new ol.Geolocation();
+geolocation.setProjection(view.getProjection());
+geolocation.on('change:position', function(event) {
+        geolocation.setTracking(false);
+
+    map.beforeRender(ol.animation.zoom({
+        duration: 500,
+        resolution: view.getResolution()
+    }));
+    view.setZoom(14);
+
+    map.beforeRender(ol.animation.pan({
+        duration: 500,
+        source: view.getCenter()
+    }));
+    view.setCenter(geolocation.getPosition());
+    
+    
+    //TODO
+});
+
+geolocation.setTracking(true);
