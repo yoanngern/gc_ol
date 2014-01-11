@@ -2,8 +2,8 @@ var styles = {
     'Point': [new ol.style.Style({
         image: new ol.style.Circle({
             radius: 5,
-            fill: new ol.style.Stroke({color: 'rgba(0,0,0,0.2)'}),
-            stroke: new ol.style.Stroke({color: 'rgba(0,0,0,0.7)', width: 1})
+            fill: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.2)'}),
+            stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.7)', width: 1})
         })
     })]
 };
