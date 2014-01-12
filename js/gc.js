@@ -47,7 +47,7 @@ var view = map.getView();
 $.urlParam = function(key) {
     var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
     return result && unescape(result[1]) || "";
-}
+};
 
 function select(feature) {
     show(feature);
@@ -87,14 +87,14 @@ bases.addEventListener(goog.events.EventType.CHANGE, function() {
                     label: feature.get('name'),
                     value: feature.get('name'),
                     feature: feature
-                }
+                };
             }),
             select: function(event, element) {
                 select(element.item.feature);
             }
         });
     }
-})
+});
 $("#result").click(function() {
     show(null);
 });
@@ -155,9 +155,9 @@ function clicked(point) {
         }
     });
 
-    show(feature)
+    show(feature);
     return !feature;
-};
+}
 Select.prototype.handleMapBrowserEvent = function(event) {
     if (event.type === ol.MapBrowserEvent.EventType.CLICK) {
         var downPx = event.map.getEventPixel(event.target.getDown());
@@ -167,7 +167,7 @@ Select.prototype.handleMapBrowserEvent = function(event) {
         var squaredDistance = dx * dx + dy * dy;
         var pass = true;
         if (squaredDistance <= squaredClickTolerance) {
-            return clicked(clickPx)
+            return clicked(clickPx);
         }
     }
     if (event.type === goog.events.EventType.TOUCHEND) {

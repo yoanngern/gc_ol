@@ -1,5 +1,5 @@
 
 Build:
 
-  npm install grunt --save-dev
+  npm install --dev
   grunt
