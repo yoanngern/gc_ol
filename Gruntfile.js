@@ -33,7 +33,7 @@ module.exports = function(grunt) {
         cssmin: {
             combine: {
                 files: {
-                    'build/gc.css': ['css/jquery-ui-1.10.3.custom.min.css', 'ol.css', 'css/gc.css']
+                    'build/gc.css': ['css/jquery-ui-1.10.3.custom.min.css', 'css/ol.css', 'css/gc.css']
                 }
             }
         }
