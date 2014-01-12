@@ -1,0 +1,19 @@
+{
+  "name": "gc_ol",
+  "version": "",
+  "description": "Mapping bases",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sbrunner/gc_ol.git"
+  },
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/sbrunner/gc_ol/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-contrib-csslint": "~0.2.0",
+    "grunt-contrib-cssmin": "~0.7.0"
+  }
+}

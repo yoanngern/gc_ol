@@ -5,50 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Test Page</title>
-<link rel="stylesheet" href="ol.css" />
-<link rel="stylesheet" href="css/jquery-ui-1.10.3.custom.min.css" />
+<link rel="stylesheet" href="build/gc.css" />
 <style>
-html, body, #map {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-}
-#map {
-/*    position: relative;*/
-}
-#search {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: large;
-}
-#result {
-    position: absolute;
-    transition: all 1s;
-    overflow: hidden;
-    padding: 0 15px;
-    width: 200px;
-    height: 0;
-    left: 0;
-    bottom: -1px;
-    background-color: rgba(255, 255, 255, 0.5);
-    border-top-right-radius: 10px;
-    border-top: 1px solid black;
-    border-right: 1px solid black;
-}
-#result.selected {
-    height: 100px;
-}
+
 </style>
 </head>
 <body>
-<div id="map"></div>
-<input id="search"></input>
-<div id="result"></div>
-<script type="text/javascript" src="js/ol.js"></script>
-<script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.js"></script>
-<script type="text/javascript" src="js/gc.js"></script>
+<div id="map" class="map"></div>
+<input id="search" class="search"></input>
+<div id="result" class="result"></div>
+<script type="text/javascript" src="build/gc.min.js"></script>
 </body>
 </html>
