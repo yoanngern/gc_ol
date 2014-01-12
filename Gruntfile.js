@@ -20,7 +20,7 @@ module.exports = function(grunt) {
                     compress: false
                 },
                 files: {
-                    'build/gc.min.js': ['js/ol.js', 'tmp/gc_tmp.min.js']
+                    'build/gc.min.js': ['js/ol-simple.js', 'tmp/gc_tmp.min.js']
                 }
             }
         },
