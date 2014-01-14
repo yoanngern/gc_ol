@@ -1,4 +1,6 @@
 - update style change
-- grunt jslint
-- optimise ol3 build
 - better desktop/mobile integration
+
+Long therm
+- optimise ol3 build
+- use high DPI
