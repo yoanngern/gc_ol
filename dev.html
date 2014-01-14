@@ -13,9 +13,25 @@
 <div id="map" class="map"></div>
 <input id="search" class="search"></input>
 <div id="result" class="result"></div>
+<a id="geolocation" class="geolocation" href="#">Plus proche</a>
 <script type="text/javascript" src="js/ol-whitespace.js"></script>
+<script type="text/javascript" src="js/handlebars-v1.3.0.js"></script>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.js"></script>
 <script type="text/javascript" src="js/gc.js"></script>
+<script id="result-template" type="text/x-handlebars-template">
+<h5>{{name}}</h5>
+<p>{{tel}}</p>
+</script>
+<script type="text/javascript">;
+    var map = new GC.Map({
+        map: 'map',
+        data_url: 'map.geojson',
+        search: '#search',
+        result: '#result',
+        result_template: $('#result-template').html(),
+        geolocation: '#geolocation'
+    });
+</script>
 </body>
 </html>

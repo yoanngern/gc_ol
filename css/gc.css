@@ -28,3 +28,16 @@ html, body, .map {
 .result.selected {
     height: 100px;
 }
+.geolocation {
+    position: absolute;
+    top: 55px;
+    right: 10px;
+    font-size: large;
+    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid black;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #444;
+    padding: 6px 10px;
+}
