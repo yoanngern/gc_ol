@@ -1,54 +1,5 @@
 GC = {};
 
-GC.Select = function(options) {
-    goog.base(this);
-
-    this.options = options;
-    this.bases = options.bases;
-    this.gc_map = options.map;
-
-    this.squaredClickTolerance = 20;
-    this.squaredTolerance = 150;
-};
-goog.inherits(GC.Select, ol.interaction.Interaction);
-
-GC.Select.prototype.clicked = function(point) {
-    var feature = null;
-    var squaredDist = this.squaredTolerance;
-    var self = this;
-    $.each(this.bases.getAllFeatures(), function() {
-        var candidatePoint = self.map_.getPixelFromCoordinate(this.getGeometry().getCoordinates());
-        var candidateSquaredDist =
-            Math.pow(point[0] - candidatePoint[0], 2) +
-            Math.pow(point[1] - candidatePoint[1], 2);
-        if (candidateSquaredDist < squaredDist) {
-            squaredDist = candidateSquaredDist;
-            feature = this;
-        }
-    });
-
-    this.gc_map.show(feature);
-    return !feature;
-};
-
-GC.Select.prototype.handleMapBrowserEvent = function(event) {
-    if (event.type === ol.MapBrowserEvent.EventType.CLICK) {
-        var downPx = event.map.getEventPixel(event.target.getDown());
-        var clickPx = event.getPixel();
-        var dx = downPx[0] - clickPx[0];
-        var dy = downPx[1] - clickPx[1];
-        var squaredDistance = dx * dx + dy * dy;
-        var pass = true;
-        if (squaredDistance <= this.squaredClickTolerance) {
-            return this.clicked(clickPx);
-        }
-    }
-    if (event.type === goog.events.EventType.TOUCHEND) {
-        return this.clicked(event.map.getEventPixel(event));
-    }
-    return true;
-};
-
 GC.Map = function(options) {
 
     this.options = options;
@@ -82,6 +33,9 @@ GC.Map = function(options) {
     });
     this.view = this.map.getView();
 
+    var bases = new ol.source.GeoJSON({
+        url: options.data_url
+    });
     var style = [new ol.style.Style({
         image: new ol.style.Circle({
             radius: 10,
@@ -89,32 +43,45 @@ GC.Map = function(options) {
             stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.7)', width: 1})
         })
     })];
-    var selected_style = [new ol.style.Style({
-        image: new ol.style.Circle({
-            radius: 10,
-            fill: new ol.style.Stroke({color: 'rgba(255, 190, 0, 0.2)'}),
-            stroke: new ol.style.Stroke({color: 'rgba(255, 190, 0, 0.7)', width: 1})
-        })
-    })];
-    this.selected_feature = null;
-    var styleFunction = function(feature, resolution) {
-        return feature == this.selected_feature ? selected_style : style;
-    };
-
-    var bases = new ol.source.GeoJSON({
-        url: options.data_url
-    });
     var vector_layer = new ol.layer.Vector({
         source: bases,
-        styleFunction: styleFunction
+        styleFunction: function(feature, resolution) {
+            return style;
+        }
     });
     this.map.addLayer(vector_layer);
 
-    this.map.addInteraction(new GC.Select({
-        map: this,
-        bases: bases
-    }));
     var self = this;
+
+    var selectedStyle = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 10,
+            stroke: new ol.style.Stroke({color: 'rgba(255, 190, 0, 1)', width: 4})
+        })
+    });
+    this.map.on('postcompose', function(evt) {
+        if (self.selectedFeature) {
+            var render = evt.getRender();
+            render.drawFeature(self.selectedFeature, selectedStyle);
+        }
+    });
+    this.map.on(ol.MapBrowserEvent.EventType.SINGLECLICK, function(evt) {
+        var pixel = evt.getPixel();
+        var feature = null;
+        var squaredDist = 150;
+        $.each(bases.getAllFeatures(), function() {
+            var candidatePixel = self.map.getPixelFromCoordinate(this.getGeometry().getCoordinates());
+            var candidateSquaredDist =
+                Math.pow(pixel[0] - candidatePixel[0], 2) +
+                Math.pow(pixel[1] - candidatePixel[1], 2);
+            if (candidateSquaredDist < squaredDist) {
+                squaredDist = candidateSquaredDist;
+                feature = this;
+            }
+        });
+
+        self.select(feature);
+    });
 
     if (options.search) {
         var first = true;
@@ -205,7 +172,9 @@ GC.Map.prototype.select = function(feature) {
 };
 
 GC.Map.prototype.show = function(feature) {
-    this.selected_feature = feature;
+    this.selectedFeature = feature;
+    this.map.requestRenderFrame();
+
     if (this.result && this.result_template) {
         if (feature) {
             this.result.html(this.result_template(feature.getProperties()));
