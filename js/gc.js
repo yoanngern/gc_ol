@@ -2,17 +2,22 @@ GC = {};
 
 GC.Select = function(options) {
     goog.base(this);
-    
+
+    this.options = options;
     this.bases = options.bases;
-    this.map = options.map;
+    this.gc_map = options.map;
+
+    this.squaredClickTolerance = 20;
+    this.squaredTolerance = 150;
 };
 goog.inherits(GC.Select, ol.interaction.Interaction);
 
 GC.Select.prototype.clicked = function(point) {
     var feature = null;
-    var squaredDist = squaredTolerance;
+    var squaredDist = this.squaredTolerance;
+    var self = this;
     $.each(this.bases.getAllFeatures(), function() {
-        var candidatePoint = self.map.getPixelFromCoordinate(this.getGeometry().getCoordinates());
+        var candidatePoint = self.map_.getPixelFromCoordinate(this.getGeometry().getCoordinates());
         var candidateSquaredDist =
             Math.pow(point[0] - candidatePoint[0], 2) +
             Math.pow(point[1] - candidatePoint[1], 2);
@@ -22,7 +27,7 @@ GC.Select.prototype.clicked = function(point) {
         }
     });
 
-    this.map.show(feature);
+    this.gc_map.show(feature);
     return !feature;
 };
 
@@ -34,12 +39,12 @@ GC.Select.prototype.handleMapBrowserEvent = function(event) {
         var dy = downPx[1] - clickPx[1];
         var squaredDistance = dx * dx + dy * dy;
         var pass = true;
-        if (squaredDistance <= squaredClickTolerance) {
-            return clicked(clickPx);
+        if (squaredDistance <= this.squaredClickTolerance) {
+            return this.clicked(clickPx);
         }
     }
     if (event.type === goog.events.EventType.TOUCHEND) {
-        return clicked(event.map.getEventPixel(event));
+        return this.clicked(event.map.getEventPixel(event));
     }
     return true;
 };
@@ -105,11 +110,8 @@ GC.Map = function(options) {
     });
     this.map.addLayer(vector_layer);
 
-    var squaredClickTolerance = 20;
-    var squaredTolerance = 150;
-
     this.map.addInteraction(new GC.Select({
-        map: this.map,
+        map: this,
         bases: bases
     }));
     var self = this;
