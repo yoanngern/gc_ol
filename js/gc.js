@@ -10,12 +10,13 @@ GC.Map = function(options) {
         layers: [
             new ol.layer.Tile({
                 source: new ol.source.XYZ({
-                    attributions: [
+// added dirrectly in html
+/*                    attributions: [
                         new ol.Attribution({
                             html: '<a href="https://www.mapbox.com/about/maps/" target="_blank">About map</a>'
                         })
                       //, ol.source.OSM.DATA_ATTRIBUTION
-                    ],
+                    ],*/
                     opaque: true,
                     tileLoadFunction: options.tileLoadFunction,
                     urls: [

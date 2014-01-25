@@ -41,3 +41,7 @@ html, body, .map {
     color: #444;
     padding: 6px 10px;
 }
+.ol-attribution {
+    border-radius: 2px 0 0 0;
+    z-index: 1;
+}
