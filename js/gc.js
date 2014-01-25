@@ -81,7 +81,7 @@ GC.Map = function(options) {
             }
         });
 
-        self.select(feature);
+        self.show(feature);
     });
 
     if (options.search) {
