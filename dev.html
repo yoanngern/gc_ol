@@ -15,7 +15,8 @@
 </div>
 <input id="search" class="search"></input>
 <div id="result" class="result"></div>
-<a id="geolocation" class="geolocation" href="#">Plus proche</a>
+<a id="geolocation" class="geolocation button" href="#">Plus proche</a>
+<a id="north" class="north button" style="display: none;" href="#">Nord</a>
 <script type="text/javascript" src="js/ol-whitespace.js"></script>
 <script type="text/javascript" src="js/handlebars-v1.3.0.js"></script>
 <script type="text/javascript" src="js/jquery.js"></script>
@@ -32,7 +33,8 @@
         search: '#search',
         result: '#result',
         result_template: $('#result-template').html(),
-        geolocation: '#geolocation'
+        geolocation: '#geolocation',
+        north: '#north'
     });
 </script>
 </body>

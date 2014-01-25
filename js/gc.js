@@ -154,6 +154,20 @@ GC.Map = function(options) {
             return false;
         });
     }
+    if (options.north) {
+        var view = this.view;
+        $(options.north).hide();
+        $(options.north).click(function() {
+            //alert("dd")
+            view.setRotation(0);
+            $(options.north).hide();
+        });
+        view.on('propertychange', function(event) {
+            if (event.getKey() == "rotation") {
+                $(options.north).show();
+            }
+        });
+    }
 };
 
 GC.Map.prototype.select = function(feature) {
