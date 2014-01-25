@@ -1,5 +1,16 @@
 - better desktop/mobile integration
+- remise au nord
+- desactiver desktop zoom gesture ?
+- geolocation notigier interdiction
+- ajouter croix sur position
+- callback unsuported browser
+- desactiver soom sur click (voir google)
+
 
 Long therm
 - optimise ol3 build
 - use high DPI
+- add clustering
+
+boinxtv
+quartz composer
