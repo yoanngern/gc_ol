@@ -10,13 +10,6 @@ GC.Map = function(options) {
         layers: [
             new ol.layer.Tile({
                 source: new ol.source.XYZ({
-// added dirrectly in html
-/*                    attributions: [
-                        new ol.Attribution({
-                            html: '<a href="https://www.mapbox.com/about/maps/" target="_blank">About map</a>'
-                        })
-                      //, ol.source.OSM.DATA_ATTRIBUTION
-                    ],*/
                     opaque: true,
                     tileLoadFunction: options.tileLoadFunction,
                     urls: [
@@ -35,15 +28,18 @@ GC.Map = function(options) {
     this.view = this.map.getView();
 
     var bases = new ol.source.GeoJSON({
-        url: options.data_url
+        url: options.data_url,
+        defaultProjection: 'EPSG:4326',
+        projection: 'EPSG:3857'
     });
     var style = [new ol.style.Style({
         image: new ol.style.Circle({
             radius: 10,
-            fill: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.2)'}),
+            fill: new ol.style.Fill({color: 'rgba(0, 0, 0, 0.2)'}),
             stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.7)', width: 1})
         })
     })];
+
     var vector_layer = new ol.layer.Vector({
         source: bases,
         styleFunction: function(feature, resolution) {
@@ -54,27 +50,42 @@ GC.Map = function(options) {
 
     var self = this;
 
-    var selectedStyle = new ol.style.Style({
-        image: new ol.style.Circle({
-            radius: 10,
-            stroke: new ol.style.Stroke({color: 'rgba(255, 190, 0, 1)', width: 4})
-        })
-    });
-    this.map.on('postcompose', function(evt) {
-        if (self.selectedFeature) {
-            var render = evt.getRender();
-            render.drawFeature(self.selectedFeature, selectedStyle);
+    this.selectedOverlay = new ol.FeatureOverlay({
+        map: this.map,
+        styleFunction: function() {
+            return [new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 10,
+                    stroke: new ol.style.Stroke({color: 'rgba(255, 190, 0, 1)', width: 4})
+                })
+            })];
         }
     });
+
+    var icon = new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+        anchor: [0.5, 1],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'fraction',
+        src: "image/location24.png"
+    }));
+    icon.load();
+    this.positionOverlay = new ol.FeatureOverlay({
+        map: this.map,
+        styleFunction: function() {
+            return [new ol.style.Style({
+                image: icon
+            })];
+        }
+    });
+
     this.map.on(ol.MapBrowserEvent.EventType.SINGLECLICK, function(evt) {
-        var pixel = evt.getPixel();
         var feature = null;
         var squaredDist = 150;
         $.each(bases.getAllFeatures(), function() {
             var candidatePixel = self.map.getPixelFromCoordinate(this.getGeometry().getCoordinates());
             var candidateSquaredDist =
-                Math.pow(pixel[0] - candidatePixel[0], 2) +
-                Math.pow(pixel[1] - candidatePixel[1], 2);
+                Math.pow(evt.pixel[0] - candidatePixel[0], 2) +
+                Math.pow(evt.pixel[1] - candidatePixel[1], 2);
             if (candidateSquaredDist < squaredDist) {
                 squaredDist = candidateSquaredDist;
                 feature = this;
@@ -132,6 +143,10 @@ GC.Map = function(options) {
                     source: self.view.getCenter()
                 }));
                 self.view.setCenter(geolocation.getPosition());
+                self.positionOverlay.setFeatures(new ol.Collection([
+                    new ol.Feature(new ol.geom.Point(geolocation.getPosition()))
+                ]));
+
 
                 var features = bases.getAllFeatures();
                 var feature = null;
@@ -158,12 +173,11 @@ GC.Map = function(options) {
         var view = this.view;
         $(options.north).hide();
         $(options.north).click(function() {
-            //alert("dd")
             view.setRotation(0);
             $(options.north).hide();
         });
         view.on('propertychange', function(event) {
-            if (event.getKey() == "rotation") {
+            if (event.key == "rotation") {
                 $(options.north).show();
             }
         });
@@ -187,15 +201,14 @@ GC.Map.prototype.select = function(feature) {
 };
 
 GC.Map.prototype.show = function(feature) {
-    this.selectedFeature = feature;
-    this.map.requestRenderFrame();
-
     if (this.result && this.result_template) {
         if (feature) {
+            this.selectedOverlay.setFeatures(new ol.Collection([feature]));
             this.result.html(this.result_template(feature.getProperties()));
             this.result.addClass('selected');
         }
         else {
+            this.selectedOverlay.setFeatures(new ol.Collection([]));
             this.result.removeClass('selected');
         }
     }
