@@ -7,6 +7,10 @@ GC.Map = function(options) {
     this.map = new ol.Map({
         renderer: ol.RendererHint.CANVAS,
         target: options.map,
+        controls: ol.control.defaults({
+            attribution: false,
+            logo: false
+        }),
         layers: [
             new ol.layer.Tile({
                 source: new ol.source.XYZ({
