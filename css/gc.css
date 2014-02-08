@@ -3,6 +3,8 @@ html, body, .map {
     padding: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden;
+    -ms-content-zooming: none;
 }
 .search {
     position: absolute;

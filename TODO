@@ -1,14 +1,15 @@
 - better desktop/mobile integration
-- desactiver desktop zoom gesture ?
-- geolocation notigier interdiction
+- geolocation notifier interdiction
 - ajouter croix sur position
 - callback unsuported browser
-
+- bloquer dezoom
 
 Long therm
 - optimise ol3 build
 - use high DPI
 - add clustering
+
+- desactiver desktop zoom gesture ?
 
 boinxtv
 quartz composer
