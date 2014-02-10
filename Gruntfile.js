@@ -11,7 +11,7 @@ module.exports = function(grunt) {
             },
             gc_tmp: {
                 files: {
-                    'tmp/gc_tmp.min.js': ['js/jquery.js', 'js/jquery-ui-1.10.3.custom.js', 'js/gc.js']
+                    'tmp/gc_tmp.min.js': ['js/jquery.js', 'js/jquery-ui-1.10.3.custom.js', 'js/gc.js', 'js/handlebars-v1.3.0.js']
                 }
             },
             gc: {
