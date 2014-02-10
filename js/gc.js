@@ -38,7 +38,7 @@ GC.Map = function(options) {
     });
     var style = [new ol.style.Style({
         image: new ol.style.Circle({
-            radius: 10,
+            radius: options.mobile ? 16 : 10,
             fill: new ol.style.Fill({color: 'rgba(0, 0, 0, 0.2)'}),
             stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.7)', width: 1})
         })
@@ -59,7 +59,7 @@ GC.Map = function(options) {
         styleFunction: function() {
             return [new ol.style.Style({
                 image: new ol.style.Circle({
-                    radius: 10,
+                    radius: options.mobile ? 32 : 10, // 16
                     stroke: new ol.style.Stroke({color: 'rgba(255, 190, 0, 1)', width: 4})
                 })
             })];
@@ -70,7 +70,8 @@ GC.Map = function(options) {
         anchor: [0.5, 1],
         anchorXUnits: 'fraction',
         anchorYUnits: 'fraction',
-        src: "image/location24.png"
+        size: options.mobile ? [52, 74] : [17, 24], // [26, 37]
+        src: options.mobile ? "image/location74.png" : "image/location24.png"
     }));
     icon.load();
     this.positionOverlay = new ol.FeatureOverlay({
@@ -84,7 +85,7 @@ GC.Map = function(options) {
 
     this.map.on(ol.MapBrowserEvent.EventType.SINGLECLICK, function(evt) {
         var feature = null;
-        var squaredDist = 150;
+        var squaredDist = options.mobile ? 600 : 150;
         $.each(bases.getAllFeatures(), function() {
             var candidatePixel = self.map.getPixelFromCoordinate(this.getGeometry().getCoordinates());
             var candidateSquaredDist =

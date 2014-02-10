@@ -25,11 +25,13 @@
 <script type="text/javascript">;
     var map = new GC.Map({
         map: 'map',
+        mobile: ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch,
         data_url: 'map.geojson',
         search: '#search',
         result: '#result',
         result_template: $('#result-template').html(),
-        geolocation: '#geolocation'
+        geolocation: '#geolocation',
+        north: '#north'
     });
 </script>
 </body>
