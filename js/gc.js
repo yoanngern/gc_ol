@@ -25,8 +25,10 @@ GC.Map = function(options) {
             })
         ],
         view: new ol.View2D({
+            maxResolution: 156543.03392804097 / 1024,
+            maxZoom: 8,
             center: ol.proj.transform([6.629, 46.517], 'EPSG:4326', 'EPSG:3857'),
-            zoom: 14
+            zoom: 3
         })
     });
     this.view = this.map.getView();

@@ -1,7 +1,5 @@
-- better desktop/mobile integration
 - geolocation notifier interdiction
 - callback unsuported browser
-- bloquer dezoom
 
 Long therm
 - optimise ol3 build
