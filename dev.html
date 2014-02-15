@@ -35,7 +35,10 @@
         result: '#result',
         result_template: $('#result-template').html(),
         geolocation: '#geolocation',
-        north: '#north'
+        north: '#north',
+        unsupportedCallback: function() {
+            alert("Your browser don't support Canvas.");
+        }
     });
 </script>
 </body>

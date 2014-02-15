@@ -1,6 +1,13 @@
 GC = {};
 
 GC.Map = function(options) {
+    var elem = document.createElement("canvas");
+    if (!(elem.getContext && elem.getContext('2d'))) {
+        if (options.unsupportedCallback) {
+            options.unsupportedCallback();
+        }
+        return;
+    }
 
     this.options = options;
 
