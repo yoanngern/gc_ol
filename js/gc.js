@@ -45,18 +45,20 @@ GC.Map = function(options) {
         defaultProjection: 'EPSG:4326',
         projection: 'EPSG:3857'
     });
-    var style = [new ol.style.Style({
-        image: new ol.style.Circle({
-            radius: options.mobile ? 16 : 10,
-            fill: new ol.style.Fill({color: 'rgba(0, 0, 0, 0.2)'}),
-            stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.7)', width: 1})
-        })
-    })];
 
     var vector_layer = new ol.layer.Vector({
         source: bases,
         styleFunction: function(feature, resolution) {
-            return style;
+            return [new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: Math.max(
+                        options.mobile ? 16 : 10,
+                        options.accuracy ? 0 : 200 / resolution
+                    ),
+                    fill: new ol.style.Fill({color: 'rgba(0, 0, 0, 0.2)'}),
+                    stroke: new ol.style.Stroke({color: 'rgba(0, 0, 0, 0.7)', width: 1})
+                })
+            })];
         }
     });
     this.map.addLayer(vector_layer);
