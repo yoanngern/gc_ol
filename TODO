@@ -1,5 +1,7 @@
+- zoom to booth point
+- supprimer la feature non selectionnée
+
 Long therm
-- geolocation notifier interdiction
 - optimise ol3 build
 - use high DPI
 - add clustering

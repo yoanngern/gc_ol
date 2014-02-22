@@ -36,7 +36,7 @@ GC.Map = function(options) {
     goog.events.listen(features, ol.CollectionEventType.REMOVE, function() {
         this.show(null);
     }, false, this);
-    
+
     this.map = new ol.Map({
         renderer: ol.RendererHint.CANVAS,
         target: options.map,
@@ -132,7 +132,7 @@ GC.Map = function(options) {
     if (options.result) {
         this.result = $(options.result);
         this.result.click(function() {
-            this.select.getFeatureOverlay().getFeatures().clear();
+            self.select.getFeatureOverlay().getFeatures().clear();
             self.show(null);
         });
     }
@@ -147,18 +147,18 @@ GC.Map = function(options) {
             geolocation.on('change:position', function(event) {
                     geolocation.setTracking(false);
 
-                self.map.beforeRender(ol.animation.zoom({
+                this.map.beforeRender(ol.animation.zoom({
                     duration: 500,
                     resolution: self.view.getResolution()
                 }));
-                self.view.setZoom(14);
+                this.view.setZoom(14);
 
-                self.map.beforeRender(ol.animation.pan({
+                this.map.beforeRender(ol.animation.pan({
                     duration: 500,
                     source: self.view.getCenter()
                 }));
-                self.view.setCenter(geolocation.getPosition());
-                self.positionOverlay.setFeatures(new ol.Collection([
+                this.view.setCenter(geolocation.getPosition());
+                this.positionOverlay.setFeatures(new ol.Collection([
                     new ol.Feature(new ol.geom.Point(geolocation.getPosition()))
                 ]));
 
@@ -176,12 +176,17 @@ GC.Map = function(options) {
                     }
                 });
                 if (feature) {
-                    var features = this.select.getFeatureOverlay().getFeatures();
                     features.clear();
                     features.push(feature);
-                    self.show(feature);
+                    this.show(feature);
                 }
-            });
+            }, self);
+
+            geolocation.on(goog.events.EventType.ERROR, function() {
+                this.result.html("<p>Impossible d'opbenir la position</p>");
+                this.result.addClass('selected');
+            }, self);
+
             geolocation.setTracking(true);
 
             return false;
