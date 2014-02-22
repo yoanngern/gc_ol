@@ -22,7 +22,8 @@ GC.Map = function(options) {
 //                            options.mobile ? 16 : 8,
 //                            options.accuracy ? 0 : 200 / resolution
                         ),
-                        stroke: new ol.style.Stroke({color: 'rgba(255, 190, 0, 1)', width: 4})
+                        stroke: new ol.style.Stroke({color: 'rgba(255, 190, 0, 1)', width: 4}),
+                        fill: new ol.style.Fill({color: 'rgba(255, 190, 0, 0.3)', width: 4})
                     })
                 })];
             }
@@ -31,9 +32,12 @@ GC.Map = function(options) {
     var features = this.select.getFeatureOverlay().getFeatures();
     goog.events.listen(features, ol.CollectionEventType.ADD, function(event) {
         var feature = /** @type {ol.Feature} */ (event.element);
+        this.bases.removeFeature(feature);
         this.show(feature);
     }, false, this);
-    goog.events.listen(features, ol.CollectionEventType.REMOVE, function() {
+    goog.events.listen(features, ol.CollectionEventType.REMOVE, function(event) {
+        var feature = /** @type {ol.Feature} */ (event.element);
+        this.bases.addFeature(feature);
         this.show(null);
     }, false, this);
 
@@ -67,15 +71,18 @@ GC.Map = function(options) {
     });
     this.view = this.map.getView();
 
-    var bases = new ol.source.GeoJSON({
+    this.bases = new ol.source.GeoJSON({
         url: options.data_url,
         defaultProjection: 'EPSG:4326',
         projection: 'EPSG:3857'
     });
 
     var vector_layer = new ol.layer.Vector({
-        source: bases,
+        source: this.bases,
         styleFunction: function(feature, resolution) {
+            if (features.getLength() == 1 && features.getAt(0) == feature) {
+                return [];
+            }
             return [new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: Math.max(
@@ -111,11 +118,11 @@ GC.Map = function(options) {
 
     if (options.search) {
         var first = true;
-        bases.addEventListener(goog.events.EventType.CHANGE, function() {
-            if (first && bases.getState() == ol.source.State.READY) {
+        this.bases.on(goog.events.EventType.CHANGE, function() {
+            if (first && this.bases.getState() == ol.source.State.READY) {
                 first = false;
                 $(options.search).autocomplete({
-                    source: $.map(bases.getAllFeatures(), function(feature) {
+                    source: $.map(this.bases.getAllFeatures(), function(feature) {
                         return {
                             label: feature.get('name'),
                             value: feature.get('name'),
@@ -127,7 +134,7 @@ GC.Map = function(options) {
                     }
                 });
             }
-        });
+        }, this);
     }
     if (options.result) {
         this.result = $(options.result);
@@ -163,7 +170,7 @@ GC.Map = function(options) {
                 ]));
 
 
-                var features = bases.getAllFeatures();
+                var features = this.bases.getAllFeatures();
                 var feature = null;
                 var squaredDist = +Infinity;
                 $.each(features, function() {
