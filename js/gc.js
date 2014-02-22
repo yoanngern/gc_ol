@@ -11,6 +11,32 @@ GC.Map = function(options) {
 
     this.options = options;
 
+    this.select = new ol.interaction.Select({
+        featureOverlay: new ol.FeatureOverlay({
+            styleFunction: function(feature, resolution) {
+                return [new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: Math.max(
+                            options.mobile ? 32 : 8,
+                            options.accuracy ? 0 : (options.mobile ? 400 : 200) / resolution
+//                            options.mobile ? 16 : 8,
+//                            options.accuracy ? 0 : 200 / resolution
+                        ),
+                        stroke: new ol.style.Stroke({color: 'rgba(255, 190, 0, 1)', width: 4})
+                    })
+                })];
+            }
+        })
+    });
+    var features = this.select.getFeatureOverlay().getFeatures();
+    goog.events.listen(features, ol.CollectionEventType.ADD, function(event) {
+        var feature = /** @type {ol.Feature} */ (event.element);
+        this.show(feature);
+    }, false, this);
+    goog.events.listen(features, ol.CollectionEventType.REMOVE, function() {
+        this.show(null);
+    }, false, this);
+    
     this.map = new ol.Map({
         renderer: ol.RendererHint.CANVAS,
         target: options.map,
@@ -18,6 +44,7 @@ GC.Map = function(options) {
             attribution: false,
             logo: false
         }),
+        interactions: ol.interaction.defaults().extend([this.select]),
         layers: [
             new ol.layer.Tile({
                 source: new ol.source.XYZ({
@@ -52,7 +79,7 @@ GC.Map = function(options) {
             return [new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: Math.max(
-                        options.mobile ? 16 : 10,
+                        options.mobile ? 16 : 8,
                         options.accuracy ? 0 : 200 / resolution
                     ),
                     fill: new ol.style.Fill({color: 'rgba(0, 0, 0, 0.2)'}),
@@ -64,18 +91,6 @@ GC.Map = function(options) {
     this.map.addLayer(vector_layer);
 
     var self = this;
-
-    this.selectedOverlay = new ol.FeatureOverlay({
-        map: this.map,
-        styleFunction: function() {
-            return [new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: options.mobile ? 32 : 10, // 16
-                    stroke: new ol.style.Stroke({color: 'rgba(255, 190, 0, 1)', width: 4})
-                })
-            })];
-        }
-    });
 
     var icon = new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
         anchor: [0.5, 1],
@@ -92,23 +107,6 @@ GC.Map = function(options) {
                 image: icon
             })];
         }
-    });
-
-    this.map.on(ol.MapBrowserEvent.EventType.SINGLECLICK, function(evt) {
-        var feature = null;
-        var squaredDist = options.mobile ? 600 : 150;
-        $.each(bases.getAllFeatures(), function() {
-            var candidatePixel = self.map.getPixelFromCoordinate(this.getGeometry().getCoordinates());
-            var candidateSquaredDist =
-                Math.pow(evt.pixel[0] - candidatePixel[0], 2) +
-                Math.pow(evt.pixel[1] - candidatePixel[1], 2);
-            if (candidateSquaredDist < squaredDist) {
-                squaredDist = candidateSquaredDist;
-                feature = this;
-            }
-        });
-
-        self.show(feature);
     });
 
     if (options.search) {
@@ -134,6 +132,7 @@ GC.Map = function(options) {
     if (options.result) {
         this.result = $(options.result);
         this.result.click(function() {
+            this.select.getFeatureOverlay().getFeatures().clear();
             self.show(null);
         });
     }
@@ -177,6 +176,9 @@ GC.Map = function(options) {
                     }
                 });
                 if (feature) {
+                    var features = this.select.getFeatureOverlay().getFeatures();
+                    features.clear();
+                    features.push(feature);
                     self.show(feature);
                 }
             });
@@ -219,12 +221,10 @@ GC.Map.prototype.select = function(feature) {
 GC.Map.prototype.show = function(feature) {
     if (this.result && this.result_template) {
         if (feature) {
-            this.selectedOverlay.setFeatures(new ol.Collection([feature]));
             this.result.html(this.result_template(feature.getProperties()));
             this.result.addClass('selected');
         }
         else {
-            this.selectedOverlay.setFeatures(new ol.Collection([]));
             this.result.removeClass('selected');
         }
     }
